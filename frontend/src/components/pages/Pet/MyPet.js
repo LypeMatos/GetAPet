@@ -28,7 +28,7 @@ function MyPets() {
                 Authorization: `Bearer ${JSON.parse(token)}`
             }
         }).then((response) => {
-            const updatedPets = pets.filter((pet) => pet._id != id);
+            const updatedPets = pets.filter((pet) => pet._id !== id);
             setPets(updatedPets); 
             return response.data;
         }).catch((err) => {
@@ -39,10 +39,26 @@ function MyPets() {
         setFlashMessage(data.message, msgType);
     }
 
+    async function concludeAdoption(id){
+        let msgType = 'success';
+        const data = await api.patch(`/pets/conclude/${id}`, {
+            headers: {
+                Authorization: `Bearer ${JSON.parse(token)}`
+            }
+        }).then((response) => {
+            return response.data;
+        }).catch((err) => {
+            msgType = 'error';
+            return err.response.data;
+        });
+
+        setFlashMessage(data.message, msgType);
+    }
+
     return (
         <section>
             <div className={styles.petlist_header}>
-                <h1>MyPets</h1>
+                <h1>Meus Pets</h1>
                 <Link to="/pet/add">Cadastrar Pet</Link>
             </div>
             <div className={styles.petlist_container}>
@@ -52,7 +68,9 @@ function MyPets() {
                         <span className="bold">{pet.name }</span>
                         <div className={styles.action}>
                             {pet.available ?  (<>
-                                {pet.adopter && <button className={styles.conclude_btn}>concluir adoção</button>}
+                                {pet.adopter && <button className={styles.conclude_btn} onClick={() => {
+                                    concludeAdoption(pet._id);
+                                }}>Concluir Adoção</button>}
                                 <Link to={`/pet/edit/${pet._id}`}>Editar</Link>
                                 <button onClick={() => {
                                     removePet(pet._id)

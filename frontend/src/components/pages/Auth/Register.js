@@ -3,6 +3,7 @@ import React from "react";
 import Input from '../../form/Input';
 import {Link} from 'react-router-dom';
 import styles from '../../form/Form.module.css';
+import MaskedInput from '../../form/inputMask.js';
 
 //context
 import {Context} from '../../../context/UserContext';
@@ -12,7 +13,10 @@ function Register() {
     const {register} = useContext(Context)
 
     function handleChange(e){
-        setUser({...user, [e.target.name]: e.target.value});
+        let phoneTest = user.phone;
+        let phoneAux = phoneTest.replace(/[^0-9]/g, '');
+        user.phone = phoneAux;
+        setUser({...user, [e.target.name]: e.target.value});        
     }
 
     function handleSubmit(e){
@@ -23,7 +27,7 @@ function Register() {
 
     return(
         <section className={styles.form_container}>
-            <h1>Register</h1>
+            <h1>Cadastro</h1>
             <form onSubmit={handleSubmit}>
                 <Input text="Nome"
                     type="text"
@@ -31,7 +35,9 @@ function Register() {
                     placeholder="Digite o seu nome"
                     handleOnChange={handleChange}
                 />
-                <Input text="Telefone"
+                <MaskedInput
+                    mask="(99) 99999-9999"
+                    text="Telefone"
                     type="text"
                     name="phone"
                     placeholder="Digite o seu telefone"
